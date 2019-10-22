@@ -1,0 +1,287 @@
+---
+title: "Project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# YELP Business Dataset EDA
+
+
+```{r data_load,include=FALSE,echo=FALSE}
+library(jsonlite)
+yelpbusines <- stream_in(file("C:/DS/introduction to datascience/yelp/yelp_dataset/yelp_dataset~/business.json"))
+
+#str(yelpbusines)
+yelpbusines_flat <-flatten(yelpbusines)
+
+
+```
+
+```{r datasubset, echo=FALSE}
+columnnames <- colnames(yelpbusines_flat)
+
+#columnnames
+#review <- stream_in(file("C:/DS/introduction to datascience/yelp/yelp_dataset/yelp_dataset~/review.json"))
+#str(review)
+#review_flat <-flatten(yelpbusines)
+
+columnnamesusing <- columnnames[1:20]
+#columnnamesusing
+
+yelpbusines_flat_dataused<-yelpbusines_flat[columnnamesusing]
+# subset data 
+
+#yelpbusines_flat_dataused 
+
+# data on which we will work
+#str(yelpbusines_flat_dataused)
+colnames(yelpbusines_flat_dataused)
+
+# removing columns which has no relevance 
+yfdn <- subset(yelpbusines_flat_dataused ,select = -c(1,3,13,14,15,16,17,18,19,20))
+# after removing few more column which we wont be using 
+#yfdn
+#colnames(yfdn)
+```
+# Data Cleaning
+```{r datacheck,include=FALSE, echo=FALSE}
+sum(is.na(yfdn$name))
+sum(is.na(yfdn$city))
+sum(is.na(yfdn$state))
+sum(is.na(yfdn$latitude))
+sum(is.na(yfdn$longitude))
+sum(is.na(yfdn$stars))
+sum(is.na(yfdn$review_count))
+sum(is.na(yfdn$is_open))
+sum(is.na(yfdn$categories))
+
+yfdn <- na.omit(yfdn)
+```
+
+```{r naremoval, echo=FALSE}
+yfdn <- na.omit(yfdn)
+```
+# NA value rows removal
+
+```{r categorycol, echo=FALSE}
+yfdn$categories[grepl("Restaurants",yfdn$categories)] <- "1"
+yfdn$categories[grepl("Nightlife",yfdn$categories)] <- "1"
+yfdn$categories[grepl("Food",yfdn$categories)] <- "1"
+yfdn$categories[grepl("Bakeries",yfdn$categories)] <- "1"
+yfdn$categories[grepl("Automotive",yfdn$categories)] <- "2"
+yfdn$categories[grepl("Spa",yfdn$categories)] <- "3"
+yfdn$categories[grepl("Salons",yfdn$categories)] <- "3"
+yfdn$categories[grepl("Education",yfdn$categories)] <- "4"
+yfdn$categories[grepl("Churches",yfdn$categories)] <- "4"
+yfdn$categories[grepl("Religious",yfdn$categories)] <- "4"
+yfdn$categories[grepl("Book",yfdn$categories)] <- "4"
+yfdn$categories[grepl("Active Life",yfdn$categories)] <- "5"
+yfdn$categories[grepl("Hotels",yfdn$categories)] <- "6"
+yfdn$categories[grepl("Real Estate",yfdn$categories)] <- "6"
+yfdn$categories[grepl("Shopping",yfdn$categories)] <- "7"
+yfdn$categories[grepl("Entertainment",yfdn$categories)] <- "7"
+yfdn$categories[grepl("Stores",yfdn$categories)] <- "7"
+yfdn$categories[grepl("Services",yfdn$categories)] <- "8"
+yfdn$categories[grepl("Pet",yfdn$categories)] <- "8"
+yfdn$categories[grepl("Health & Medical",yfdn$categories)] <- "9"
+yfdn$categories[grepl("Stations",yfdn$categories)]<- "10"
+yfdn$categories[grepl("Media",yfdn$categories)]<- "10"
+yfdn$categories[grepl("Public Art",yfdn$categories)]<- "10"
+yfdn$categories[grepl("Local Flavor",yfdn$categories)]<- "10"
+
+```
+#categories created for category column
+
+#1 restaurants /Nightlife/Food/Bakeries
+
+#2 Automotive
+
+#3 Spa/Salons
+
+#4 Education/churches/Religious
+
+#5 Active Life
+
+#6 hotels/Real
+
+#7 Shopping/Entertainment/Stores
+
+#8 Services/Pet
+
+#9 Health & Medical
+
+#10 Public Art /Local Flavour
+
+# Graphical Representation 
+
+```{r convert,include=FALSE,echo=FALSE}
+#str(yfdn$categories)
+sum(is.na(yfdn$categories))
+as.numeric(yfdn$categories)
+yfdn <- na.omit(yfdn) 
+#$Converting data set into factor()
+yfdn$is_open <- as.factor(yfdn$is_open)
+yfdn$categories <- as.factor(yfdn$categories)
+#str(yfdn$is_open)
+#str(yfdn$categories) 
+```
+```{r fig.cap= "city vs categories", echo=FALSE}
+library("ggplot2")
+ggplot(aes(x=city,y=categories),data=yfdn)+
+  geom_point()
+
+```
+
+```{r fig.cap= "state vs star", echo=FALSE}
+ggplot(aes(y=state,x=stars),data=yfdn)+
+  geom_point()
+```
+```{r fig.cap= " Boxplot of star vs State", echo=FALSE}
+boxplot(yfdn$stars~yfdn$state, xlab = 'states' ,ylab = 'stars',main = 'State Vs Stars', col= "Blue")
+```
+ box plots -Most of the ratings lies between 3-4.5 (for max states). also only 4 states shows 5 star service which means yelp work best in these states
+ 
+```{r fig.cap= " Boxplot of star vs Review count", echo=FALSE}
+boxplot(yfdn$stars~yfdn$review_count, xlab = 'review count' ,ylab = 'stars',main = 'stars Vs review_count', col= "blue" )
+```
+
+```{r fig.cap= " plot of star vs Review count", echo=FALSE}
+library("ggplot2")
+plot(review_count~stars , data= yfdn, col= "red")
+#hist(review_count~stars , data= yfdn)
+typeof(yfdn$review_count)
+```
+
+
+```{r fig.cap= " Boxplot of star vs is_open", echo=FALSE}
+boxplot(yfdn$stars~yfdn$is_open, xlab = 'is_open' ,ylab = 'stars',main = 'Active Business Vs Stars', col= "yellow")
+```
+
+```{r fig.cap= " Boxplot of state vs categories", echo=FALSE}
+boxplot(yfdn$stars~yfdn$categories, xlab = 'Categories' ,ylab = 'stars',main = 'Categories Vs Stars', col= "orange")
+```
+
+```{r fig.cap= " GGplot(boxplot) of Review count and categories ", echo=FALSE}
+
+ 
+ boxplot(yfdn$review_count~yfdn$categories, xlab = 'Category' ,ylab = 'Review Count',main = 'Categories vs Review Count', col= "blue")
+```
+
+ # review_count vs category  Restaurants & hotel/Real state services are highly reviewd which may suggests that they have the highest market amongst these categories and people expect a lot from these businesses
+ 
+# Descriptive Statistics 
+```{r Summary, echo=FALSE}
+summary(yfdn) 
+```
+# Descriptive stats of numerical Variables 
+
+```{r Descrptivestats, echo=FALSE}
+sd(yfdn$city)
+var(yfdn$city)
+sd(yfdn$state)
+var(yfdn$state)
+sd(yfdn$postal_code)
+var(yfdn$postal_code)
+sd(yfdn$latitude)
+var(yfdn$latitude)
+sd(yfdn$longitude)
+var(yfdn$longitude)
+sd(yfdn$stars)
+var(yfdn$stars)
+sd(yfdn$review_count)
+var(yfdn$review_count)
+```
+
+```{r fig.cap= " Barplot of state ", echo=FALSE}
+ site.freq <- table(yfdn$state)
+ barplot(site.freq , decreasing = T)
+ barplot(site.freq[order(site.freq,decreasing = T)],space = c(7,7,7,7,7),col = rainbow(20),xlab='State', ylab='Frequency')
+``` 
+
+# Analysis
+
+```{r Top5ratedbusiness , echo=FALSE}
+yfdn_top5 <- yfdn[order(-yfdn$review_count),]
+yfdn_top5 <- head(yfdn_top5)
+yfdn_top5
+```
+
+```{r fig.cap= "Piechart of top rated business ", echo=FALSE}
+library(RColorBrewer)
+myPalette <- brewer.pal(6, "Set2") 
+
+# You can change the border of each area with the classical parameters:
+pie(yfdn_top5$review_count , labels = c("Mon Ami Gabi(8348)","Bacchanal Buffet(8339)","Wicked Spoon(6708)","Hash House A Go Go(5763)","Gordon Ramsay BurGR(5484)","Earl of Sandwich(5075)"), border="White", col=myPalette, main = "Piechart of top rated business" )
+```
+
+# Plotting Business Cordinates on GOOGLE Maps
+
+#if(!requireNamespace("devtools")) install.packages("devtools")
+#devtools::install_github("dkahle/ggmap", ref = "tidyup", force=TRUE)
+
+```{r fig.cap= " locating business cordinates on Google Maps", echo=FALSE}
+library("ggmap")
+ggmap::register_google(key = "AIzaSyD7CbCCHcChmUSZFT_rZKq2mma0QE65uRU")
+library(ggplot2)
+p <- ggmap(get_googlemap(center = c(lon = -95.7128906, lat = 37.090241),
+                         zoom = 4, scale = 2,
+                         maptype ='terrain',
+                         color = 'color'))
+p + geom_point(aes(x = as.numeric(longitude), y =as.numeric(latitude) ,colour = stars ), data = yfdn, size = 0.5) + 
+  theme(legend.position="bottom")
+  typeof(yfdn$latitude)
+
+```
+
+# Normality
+
+```{r fig.cap= " Normality check", echo=FALSE}
+my_hist=hist(yfdn$stars , breaks=40  , plot=F)
+
+# Color vector
+my_color= ifelse(my_hist$breaks < 2.5, rgb(0.2,0.8,0.5,0.5) , ifelse (my_hist$breaks > 4, "purple", rgb(0.2,0.2,0.2,0.2) ))
+
+# Final plot
+plot(my_hist, col=my_color , border=F , main="" , xlab="value of the variable", xlim=c(1,5) )
+```
+
+most of the reviews are rated as 3.5 to 4 left skewed
+
+# Statistical Tests
+
+```{r tteststarandreviewcount , echo=FALSE}
+t.test(yfdn$stars,yfdn$review_count )
+
+```
+
+#null Hypothesis : Review count for each ratings are equally distributed.
+#AS p value is low , we will reject null hypothesis.
+#this means review count across each star  rating are different
+
+```{r anovabetween_reviewcount_categories , echo=FALSE}
+aov2<- aov(review_count~categories, data = yfdn )
+names(aov2)
+summary(aov2)
+```
+#Null hypothesis : review_count are equally distributed across categories
+#P value is low so we will reject null hypothesis.
+#which means review counts are not equally distributed across categories
+
+```{r chisq_city&cat, echo=FALSE}
+chisq.test(yfdn$city , yfdn$categories, simulate.p.value = TRUE ,correct = TRUE)
+```
+#Null Hypotheis : all the categories are equally distributed in each city
+#p value is low , so we will reject null hypothesis.
+#which means : all the businesses are not equally distributed across cities
+
+```{r anovabetweenstar&cat, echo=FALSE}
+aov3 <- aov(stars~categories , data = yfdn)
+names(aov3)
+summary(aov3)
+```
+#Null hypothesis : ratings are equally distributed across business categories
+#Since P value is low , we reject the null hypothesis 
+#which means rating differs across categories

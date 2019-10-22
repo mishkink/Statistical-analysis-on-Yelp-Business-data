@@ -1,0 +1,31 @@
+---
+title: "HW Wk 3 - Pima_Vlbw_datasets"
+author: "Nick Harbeck, Jason Witry, Edwin Lo"
+date: "9/24/2019"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, include = TRUE)
+```
+
+```{r data_load  }
+library(jsonlite)
+#yelpbusines<-fromJSON("C:/DS/introduction to datascience/yelp/yelp_dataset/yelp_dataset~/business.json")
+yelpbusines <- stream_in(file("C:/DS/introduction to datascience/yelp/yelp_dataset/yelp_dataset~/business.json"))
+
+#str(yelpbusines)
+yelpbusines_flat <-flatten(yelpbusines)
+head(yelpbusines_flat)
+
+#library(tibble)
+#yelpbusines_flat_tbl <- as_data_frame(yelpbusines_flat)
+
+#yelpbusines_flat_tbl
+
+```
+
+
