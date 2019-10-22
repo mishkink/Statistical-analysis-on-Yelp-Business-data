@@ -27,7 +27,7 @@ Yelp is a business directory service and crowdsourced review forum. This dataset
 
 ```{r data_load,include=FALSE,echo=FALSE}
 library(jsonlite)
-yelpbusines <- stream_in(file("C:/DS/introduction to datascience/yelp/yelp_dataset/yelp_dataset~/business.json"))
+yelpbusines <- stream_in(file("D:/Yelp/business.json"))
 
 #str(yelpbusines)
 yelpbusines_flat <-flatten(yelpbusines)
@@ -149,8 +149,9 @@ The EDA on the States shows that businesses covered under Yelp are most prominen
 In some states like Nebraska & New Mexico there is nearly no data of star ratings. This could imply that, Yelp is not well established in these states or that advertisement strategies are not strong enough in these markets. Such readings may also suggest that there exisits a stronger competitor against Yelp these states.
 
 ```{r fig.cap= "state vs star", echo=FALSE}
+library("ggplot2")
 q <- ggplot(aes(y=state,x=stars),data=yfdn)+ geom_point()
-q + ggtitle("Star Ratings from different States", xlab = "Stars", ylab = "States" )
+q + ggtitle("Star Ratings from different States")  + xlab("Stars") +  ylab("States")
 ```
 
 #' ### *Graph 3:*
@@ -268,6 +269,19 @@ var(yfdn$review_count)
 
 #' ### **Testing**
 
+#' ### *Sample*
+#' #### *Taking random sample of 15000 rows to compute statistical tests*
+
+```{r sample , echo=FALSE}
+randomSample = function(yfdn,n) { 
+   return (yfdn[sample(nrow(yfdn), n),])
+}
+
+yfdn_sample<-randomSample(yfdn, 15000)
+print(head(yfdn_sample))
+```
+
+
 #' ### *Test 1: Welch Two Sample t-test:*
 #' #### *Compares: Stars vs. Review_Count*
 
@@ -281,10 +295,10 @@ The SMART question that asks of the relationship between the ratings and review
 counts, can be explained here. Since, the reviews are unequally distributed amongst
 the ratings, we cannot conclude that, as the number of rating increases, for a particular business, it’s rating will improve as well.
 
+
+
 ```{r tteststarandreviewcount , echo=FALSE}
-stars_sample <- yfdn(stars, 30, replace = TRUE)
-reviewcounts_sample <- yfdn(review_count, 30, replace = TRUE)
-t.test(yfdn$stars,yfdn$review_count )
+t.test(yfdn_sample$stars,yfdn_sample$reviewcounts )
 ```
 
 #' ### *Test 2: Chi – Squared Test:*
@@ -301,7 +315,7 @@ category 1, etc. We are trying to find whether the different businesses are equa
 distributed in each city or not, out of the 36 states taken into consideration for our purpose.
 
 ```{r chisq_city&cat, echo=FALSE}
-chisq.test(yfdn$city , yfdn$categories, simulate.p.value = TRUE, correct = TRUE)
+chisq.test(yfdn_sample$city , yfdn_sample$categories, simulate.p.value = TRUE, correct = TRUE)
 ```
 
 #' ### *Test 3: ANOVA Test*
@@ -316,7 +330,7 @@ Null hypothesis is rejected.
 Different business categories have unequal number of reviews, which means reviews are not equally distributed across various categories.
 
 ```{r anovabetween_reviewcount_categories , echo=FALSE}
-aov2<- aov(review_count~categories, data = yfdn )
+aov2<- aov(review_count~categories, data = yfdn_sample )
 names(aov2)
 summary(aov2)
 ```
@@ -333,7 +347,7 @@ Null hypothesis is rejected.
 Different business categories have unequal star ratings, which means ratings are not equally distributed across various categories.
 
 ```{r anovabetweenstar&cat, echo=FALSE}
-aov3 <- aov(stars~categories , data = yfdn)
+aov3 <- aov(stars~categories , data = yfdn_sample)
 names(aov3)
 summary(aov3)
 ```
@@ -351,4 +365,4 @@ Despite finding an answer to our SMART Questions, we came across certain limitat
 #' ## **Chapter 6: Future Work**
 The Yelp dataset consists of sub-domains such as Business, Checkin, Reviw, Tip and User. Each of these sub-datasets consist of a large number of datapoints. For initial EDA and Phase 1 of the project, we chose the Business Dataset. However, given the scope of answering several other questions in Phase 2, we aim to make use of multiple attributes from most of the sub-datasets and combining them to create a single dataset, which allows us to answer our questions and maybe even find something new!  
 
-#' `rmarkdown::render('/Users/you/Documents/Docc.R')`
+#' `rmarkdown::render('/Users/Sanat/Downloads/Docc.R')`
