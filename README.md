@@ -28,10 +28,10 @@ Note : Running KNIT will taker time upto 10-15 minutes.
 # Link to download R studio: 
       https://rstudio.com/products/rstudio/download/
       
-# Themes for plots uses from
+# Themes for plots
       https://www.r-graph-gallery.com/
       
- Reference : https://stackoverflow.com/
+ References : https://stackoverflow.com/
  
             https://community.rstudio.com/
       
