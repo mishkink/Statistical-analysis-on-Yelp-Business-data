@@ -23,7 +23,7 @@ vi) It is highly advised to install these maps before running codes as these com
 Note : Running KNIT will taker time upto 10-15 minutes.
 
        Codes are present in RMD style format.
-       We have used our Google cloud key which will be deleted by the end of this month(as it is chargeable), so if the issue persists in future , it is advised to use google map key and pass it in the code.
+       We have used our Google cloud key which will be deleted by the end of this month(as it is chargeable). In order to used the feature after October 2019, it is advised to use google map key and pass it in the code.
        
 # Link to download R studio: 
       https://rstudio.com/products/rstudio/download/
